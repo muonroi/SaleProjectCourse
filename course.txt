@@ -1,0 +1,25 @@
+Admin
+- Hiển thị phân trang sản phẩm, người dùng (tick)
+- Đăng nhập, phân quyền (tick)
+- Thống kê đơn hàng bán ra (ngày/tháng/năm), 
+- Sản phẩm được đặt nhiều nhất (ngày/tháng/năm), 
+- Thống kê số lượng user trong hệ thống (on/off)
+- Gửi mail hàng loạt về chương trình khuyến mãi cho user
+- Quản lý menu
+- Thông tin giảm giá// ignore
+--------------------
+Người dùng
+- Hiển thị danh sách sản phẩm, danh mục, menu
+- Giỏ hàng, đặt hàng
+- Tình trạng đơn hàng
+- Thông tin người dùng
+- Tìm kiếm sản phẩm theo tên, danh mục,...
+
+
+----------------------
+- Thống kê đơn hàng bán ra (ngày/tháng/năm): + Thông tin người mua hàng đã mua loại hàng gì
+											 + Đếm số lượng sản phẩm được mua theo mã đơn hàng
+											 + Trả về theo điều kiện ngày/tháng/năm -> số lượng
+											 
+											 
+											 

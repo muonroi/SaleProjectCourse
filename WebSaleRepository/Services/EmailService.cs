@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using SendGrid;
 using SendGrid.Helpers.Mail;
@@ -15,7 +16,9 @@ namespace WebSaleRepository.Services
     public class EmailService : BaseRepository, IEmailService
     {
         private readonly SendGridSetting _sendGridSetting;
-        public EmailService(IOptions<SendGridSetting> sendGridSetting)
+
+        public EmailService(IOptions<SendGridSetting> sendGridSetting, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
+            : base(httpContextAccessor, configuration)
         {
             _sendGridSetting = sendGridSetting.Value;
         }

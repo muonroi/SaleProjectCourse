@@ -6,14 +6,14 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using WebSaleRepository.Persistance.Entities;
+using WebSaleRepository.DTO.Accounts;
 using WebSaleRepository.Responses.Accounts;
 
 namespace WebSaleRepository.Helper
 {
     public static class ManagerTokenHelper
     {
-        public static string GenarateToken(IConfiguration configuration, AccountEntity accountEntity, int timeExpires)
+        public static string GenarateToken(IConfiguration configuration, AccountDTO accountInfo, int timeExpires)
         {
             IConfigurationSection jwtSettings = configuration.GetSection("JWT");
             byte[] jwtKey = Encoding.UTF8.GetBytes(jwtSettings.GetSection("Secret").Value);
@@ -21,8 +21,8 @@ namespace WebSaleRepository.Helper
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.NameIdentifier, accountEntity.Username),
-                    new Claim(ClaimTypes.Role, accountEntity.RoleId.ToString())
+                    new Claim(ClaimTypes.NameIdentifier, accountInfo.Username),
+                    new Claim(ClaimTypes.Role, accountInfo.RoleName)
                 }),
                 Expires = DateTime.UtcNow.AddHours(timeExpires),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(jwtKey), SecurityAlgorithms.HmacSha256Signature)
@@ -32,6 +32,7 @@ namespace WebSaleRepository.Helper
             string result = tokenHandler.WriteToken(token);
             return result;
         }
+
         private static JwtSecurityToken PareseJwtToken(IConfiguration configuration, string token)
         {
             IConfigurationSection jwtSettings = configuration.GetSection("JWT");
@@ -51,15 +52,14 @@ namespace WebSaleRepository.Helper
             }
             catch
             {
-
             }
             finally
             {
             }
             JwtSecurityToken result = tokenHandler.ReadToken(token) as JwtSecurityToken;
             return result;
-
         }
+
         public static TokenInfo GetTokenInfo(IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
         {
             string token = httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
@@ -67,7 +67,7 @@ namespace WebSaleRepository.Helper
             TokenInfo result = new TokenInfo
             {
                 UserName = tokenRaw.Claims.FirstOrDefault(claim => claim.Type == "nameid")?.Value,
-                Role = int.Parse(tokenRaw.Claims.FirstOrDefault(claim => claim.Type == "role")?.Value)
+                Role = tokenRaw.Claims.FirstOrDefault(claim => claim.Type == "role")?.Value
             };
             return result;
         }

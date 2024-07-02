@@ -1,10 +1,24 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
+using WebSaleRepository.Helper;
+using WebSaleRepository.Models;
+using WebSaleRepository.Responses.Accounts;
+using WebSaleRepository.Settings;
 
 namespace WebSaleRepository.Infrastructures.Base
 {
-    public class BaseRepository
+    public abstract class BaseRepository
     {
+        protected readonly IHttpContextAccessor _httpContextAccessor;
+
+        protected readonly IConfiguration _configuration;
+
+        public BaseRepository(IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
+        {
+            _httpContextAccessor = httpContextAccessor;
+            _configuration = configuration;
+        }
 
         protected static Task<TResponse<T>> OK<T>(T data, string message = "")
         {
@@ -31,6 +45,19 @@ namespace WebSaleRepository.Infrastructures.Base
             TResponse<T> response = new TResponse<T>(statusCode, customMessage);
 
             return Task.FromResult(response);
+        }
+
+        protected TokenInfoModel GetCurrentRoleInfo()
+        {
+            TokenInfo tokenInfo = ManagerTokenHelper.GetTokenInfo(_httpContextAccessor, _configuration);
+
+            bool isRoleAdmin = tokenInfo.Role == RoleSettings.AdminRole;
+            TokenInfoModel result = new TokenInfoModel
+            {
+                IsAdminRole = isRoleAdmin,
+                TokenInfo = tokenInfo
+            };
+            return result;
         }
     }
 }

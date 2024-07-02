@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebSaleRepository.Persistance;
 
-namespace WebSaleRepository.Persistence.Migrations
+namespace WebSaleRepository.Persistance.Migrations
 {
     [DbContext(typeof(SaleDbContext))]
-    partial class SaleDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240702124950_updateIdNo")]
+    partial class updateIdNo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -95,27 +97,27 @@ namespace WebSaleRepository.Persistence.Migrations
                         {
                             Username = "admin",
                             AccountStatus = 0,
-                            CreateDate = new DateTime(2024, 7, 2, 12, 52, 40, 809, DateTimeKind.Utc).AddTicks(5734),
+                            CreateDate = new DateTime(2024, 7, 2, 12, 49, 49, 856, DateTimeKind.Utc).AddTicks(378),
                             Id = 0L,
-                            IdNo = new Guid("35f2d67d-42f1-4133-b6a3-447fcc599598"),
+                            IdNo = new Guid("40757720-a0cc-4053-a02e-cd3d30dfc986"),
                             IsActive = true,
                             IsDelete = false,
-                            Password = "$2b$10$1m89N/s9Q4t42ByKCtHYkuK1xbYnJ/60r9PMGBqTcZFUD1BVhBWnu",
+                            Password = "$2b$10$pYjnWiQ5UHv9UAsa.fK01Or3a4m3FDQLvD0HWVvELHWuplN/mfW0G",
                             RoleId = 12312L,
-                            Salt = "$2b$10$1m89N/s9Q4t42ByKCtHYku"
+                            Salt = "$2b$10$pYjnWiQ5UHv9UAsa.fK01O"
                         },
                         new
                         {
                             Username = "user",
                             AccountStatus = 0,
-                            CreateDate = new DateTime(2024, 7, 2, 12, 52, 40, 903, DateTimeKind.Utc).AddTicks(4622),
+                            CreateDate = new DateTime(2024, 7, 2, 12, 49, 49, 943, DateTimeKind.Utc).AddTicks(1738),
                             Id = 0L,
-                            IdNo = new Guid("e389cf75-ec45-40f4-afbf-72897890793f"),
+                            IdNo = new Guid("44aaee31-e18e-4f63-b7d0-b941b739a8eb"),
                             IsActive = true,
                             IsDelete = false,
-                            Password = "$2b$10$9eWyfnE.wF/dpRIaEBS7WO88ekBLFasY0N1uhrUIizXWv9vN5Jdai",
+                            Password = "$2b$10$uyPs08kjKH78VNEELzI/OO7uqJY8UkyqXcHiAXslE6vmi2.RYJ046",
                             RoleId = 1232L,
-                            Salt = "$2b$10$9eWyfnE.wF/dpRIaEBS7WO"
+                            Salt = "$2b$10$uyPs08kjKH78VNEELzI/OO"
                         });
                 });
 
@@ -320,9 +322,9 @@ namespace WebSaleRepository.Persistence.Migrations
                         new
                         {
                             Id = 12321L,
-                            CreateDate = new DateTime(2024, 7, 2, 12, 52, 40, 809, DateTimeKind.Utc).AddTicks(4132),
+                            CreateDate = new DateTime(2024, 7, 2, 12, 49, 49, 855, DateTimeKind.Utc).AddTicks(8000),
                             Description = "Electronic products category",
-                            IdNo = new Guid("aa99ca21-1ee3-4f83-9b43-9734c6f1bd7a"),
+                            IdNo = new Guid("fe36bb1e-21e3-421b-a521-0e5be66691c7"),
                             IsActive = true,
                             IsDelete = false,
                             Name = "Electronics"
@@ -330,9 +332,9 @@ namespace WebSaleRepository.Persistence.Migrations
                         new
                         {
                             Id = 21232L,
-                            CreateDate = new DateTime(2024, 7, 2, 12, 52, 40, 809, DateTimeKind.Utc).AddTicks(4666),
+                            CreateDate = new DateTime(2024, 7, 2, 12, 49, 49, 855, DateTimeKind.Utc).AddTicks(8730),
                             Description = "Clothing category",
-                            IdNo = new Guid("9bee568e-c7d6-4767-9181-7643d85b4370"),
+                            IdNo = new Guid("0efc6d68-c401-4534-be2b-90628e8054bb"),
                             IsActive = true,
                             IsDelete = false,
                             Name = "Clothing"
@@ -579,9 +581,9 @@ namespace WebSaleRepository.Persistence.Migrations
                             Id = 1231L,
                             CategoryId = 21232L,
                             Color = "Black",
-                            CreateDate = new DateTime(2024, 7, 2, 12, 52, 40, 808, DateTimeKind.Utc).AddTicks(2008),
+                            CreateDate = new DateTime(2024, 7, 2, 12, 49, 49, 854, DateTimeKind.Utc).AddTicks(2894),
                             Description = "A high-performance smartphone for professionals",
-                            IdNo = new Guid("9f278243-9e78-4c00-9c17-78fb284ac271"),
+                            IdNo = new Guid("4c874a34-f81a-48c9-a2be-81898ed27c0c"),
                             Image = "smartphone.jpg",
                             IsActive = true,
                             IsDelete = false,
@@ -596,9 +598,9 @@ namespace WebSaleRepository.Persistence.Migrations
                             Id = 2232L,
                             CategoryId = 12321L,
                             Color = "Silver",
-                            CreateDate = new DateTime(2024, 7, 2, 12, 52, 40, 808, DateTimeKind.Utc).AddTicks(4554),
+                            CreateDate = new DateTime(2024, 7, 2, 12, 49, 49, 854, DateTimeKind.Utc).AddTicks(5327),
                             Description = "A high-performance laptop for professionals",
-                            IdNo = new Guid("02337db2-e19d-428c-87ed-266680cf0dc6"),
+                            IdNo = new Guid("bee64f77-7d16-487c-ba3a-1bafcc7391c8"),
                             Image = "laptop.jpg",
                             IsActive = true,
                             IsDelete = false,
@@ -678,9 +680,9 @@ namespace WebSaleRepository.Persistence.Migrations
                         new
                         {
                             Id = 12312L,
-                            CreateDate = new DateTime(2024, 7, 2, 12, 52, 40, 809, DateTimeKind.Utc).AddTicks(5058),
+                            CreateDate = new DateTime(2024, 7, 2, 12, 49, 49, 855, DateTimeKind.Utc).AddTicks(9241),
                             Description = "Admin role",
-                            IdNo = new Guid("06b9fd79-ac58-4984-a9a0-e81ae90f4039"),
+                            IdNo = new Guid("9fa18c14-55e3-4b36-8d5d-289c750a49fd"),
                             IsActive = true,
                             IsDelete = false,
                             Name = "Admin"
@@ -688,9 +690,9 @@ namespace WebSaleRepository.Persistence.Migrations
                         new
                         {
                             Id = 1232L,
-                            CreateDate = new DateTime(2024, 7, 2, 12, 52, 40, 809, DateTimeKind.Utc).AddTicks(5381),
+                            CreateDate = new DateTime(2024, 7, 2, 12, 49, 49, 855, DateTimeKind.Utc).AddTicks(9748),
                             Description = "User role",
-                            IdNo = new Guid("9ef9a6dc-a408-4cf4-b0fc-541dc9930626"),
+                            IdNo = new Guid("4cdbeee7-3dff-4482-8708-0a723bd8beef"),
                             IsActive = true,
                             IsDelete = false,
                             Name = "User"
@@ -785,10 +787,10 @@ namespace WebSaleRepository.Persistence.Migrations
                         {
                             Id = 231211L,
                             Address = "1234 Admin St",
-                            CreateDate = new DateTime(2024, 7, 2, 12, 52, 40, 988, DateTimeKind.Utc).AddTicks(4571),
+                            CreateDate = new DateTime(2024, 7, 2, 12, 49, 50, 25, DateTimeKind.Utc).AddTicks(9253),
                             Email = "admin@co.com",
                             Fullname = "admin",
-                            IdNo = new Guid("85cbd085-777f-4577-b0b8-6ee9feb57ed5"),
+                            IdNo = new Guid("2e98e6d8-b97d-4e58-9055-2175be85399d"),
                             IsActive = true,
                             IsDelete = false,
                             Phone = "123456789",
@@ -798,10 +800,10 @@ namespace WebSaleRepository.Persistence.Migrations
                         {
                             Id = 223123L,
                             Address = "4321 User St",
-                            CreateDate = new DateTime(2024, 7, 2, 12, 52, 40, 988, DateTimeKind.Utc).AddTicks(5750),
+                            CreateDate = new DateTime(2024, 7, 2, 12, 49, 50, 26, DateTimeKind.Utc).AddTicks(101),
                             Email = "user@co.com",
                             Fullname = "user",
-                            IdNo = new Guid("abbdccd5-feb0-4583-9eff-81794c920e62"),
+                            IdNo = new Guid("be2dd7c7-0ee5-4e27-a87b-dcd8484a02e4"),
                             IsActive = true,
                             IsDelete = false,
                             Phone = "987654321",

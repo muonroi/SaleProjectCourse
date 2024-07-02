@@ -14,8 +14,7 @@
 
         public string Address { get; set; }
 
-
-        public long RoleId { get; set; }
+        public string RoleName { get; set; }
 
         public string CreatedAt { get; set; }
 

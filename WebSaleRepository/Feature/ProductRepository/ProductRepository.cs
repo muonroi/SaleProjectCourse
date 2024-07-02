@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +20,8 @@ namespace WebSaleRepository.Feature.ProductRepository
     {
         private readonly SaleDbContext _dbContext;
 
-        public ProductRepository(SaleDbContext dbContext)
+        public ProductRepository(SaleDbContext dbContext, IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
+            : base(httpContextAccessor, configuration)
         {
             _dbContext = dbContext;
         }

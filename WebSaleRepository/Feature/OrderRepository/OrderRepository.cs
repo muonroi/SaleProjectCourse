@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebSaleRepository.Infrastructures.Base;
@@ -12,7 +14,9 @@ namespace WebSaleRepository.Feature.OrderRepository
     internal class OrderRepository : BaseRepository, IOrderRepository
     {
         private readonly SaleDbContext _dbContext;
-        public OrderRepository(SaleDbContext saleDbContext)
+
+        public OrderRepository(SaleDbContext saleDbContext, IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
+            : base(httpContextAccessor, configuration)
         {
             _dbContext = saleDbContext;
         }

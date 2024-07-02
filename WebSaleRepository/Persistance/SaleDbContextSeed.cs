@@ -70,14 +70,14 @@ namespace WebSaleRepository.Persistance
                 {
                     Username = "admin",
                     Salt = saltAdmin,
-                    Password = CipherPlantextHelper.Encrypt("admin", saltAdmin),
+                    Password = CipherPlantextHelper.Encrypt("123456789", saltAdmin),
                     RoleId = 12312
                 },
                 new AccountEntity()
                 {
                     Username = "user",
                     Salt = saltuser,
-                    Password = CipherPlantextHelper.Encrypt("user", saltuser),
+                    Password = CipherPlantextHelper.Encrypt("123456789", saltuser),
                     RoleId = 1232
                 });
             _ = modelBuilder.Entity<UserEntity>().HasData(

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebSaleRepository.Infrastructures.Base;
 using WebSaleRepository.Interfaces.Accounts;
@@ -15,6 +16,7 @@ namespace WebSaleAPI.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAccountRepository _accountRepository;
+
         public AccountController(IAccountRepository accountRepository)
         {
             _accountRepository = accountRepository;
@@ -50,5 +52,44 @@ namespace WebSaleAPI.Controllers
             return Ok(response);
         }
 
+        [HttpGet("roles-list")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetCurrentRole([FromQuery] string input)
+        {
+            TResponse<List<GetCurrentRolesRespone>> response = await _accountRepository.GetCurrentRolesAsync(input);
+            return Ok(response);
+        }
+
+        [HttpPost("role")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> CreateRole([FromBody] CreateRoleRequest request)
+        {
+            TResponse<bool> response = await _accountRepository.CreateaRolesAsync(request);
+            return Ok(response);
+        }
+
+        [HttpPut("role")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateRole([FromBody] UpdateRoleRequest request)
+        {
+            TResponse<bool> response = await _accountRepository.UpdateRolesAsync(request);
+            return Ok(response);
+        }
+
+        [HttpDelete("role")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> RemoveRole([FromQuery] long roleId)
+        {
+            TResponse<bool> response = await _accountRepository.RemoveRolesAsync(roleId);
+            return Ok(response);
+        }
+
+        [HttpPatch("role-assign")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> AssignRole([FromBody] AssignRolesRequest request)
+        {
+            TResponse<bool> response = await _accountRepository.AssignRolesAsync(request);
+            return Ok(response);
+        }
     }
 }

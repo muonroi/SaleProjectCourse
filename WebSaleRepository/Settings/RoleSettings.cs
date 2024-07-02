@@ -2,6 +2,6 @@
 {
     public static class RoleSettings
     {
-        public const int AdminRole = 12312;
+        public const string AdminRole = "Admin";
     }
 }

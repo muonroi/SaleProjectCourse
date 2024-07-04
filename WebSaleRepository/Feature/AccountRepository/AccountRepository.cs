@@ -154,11 +154,11 @@ namespace WebSaleRepository.Feature.AccountRepository
 
             AccountDTO accountDto = new AccountDTO
             {
-                Username = existAccountInfo.Username,
-                Password = existAccountInfo.Password,
-                Salt = existAccountInfo.Salt,
-                RoleId = existAccountInfo.RoleId,
-                AccountStatus = existAccountInfo.AccountStatus,
+                Username = newAccountUser.Username,
+                Password = newAccountUser.Password,
+                Salt = newAccountUser.Salt,
+                RoleId = newAccountUser.RoleId,
+                AccountStatus = newAccountUser.AccountStatus,
                 RoleName = nameof(RoleConfig.User)
             };
 
@@ -315,6 +315,7 @@ namespace WebSaleRepository.Feature.AccountRepository
 
         public async Task<TResponse<bool>> AssignRolesAsync(AssignRolesRequest request)
         {
+            int result = 0;
             TokenInfoModel tokenInfo = GetCurrentRoleInfo();
 
             if (!tokenInfo.IsAdminRole)
@@ -337,8 +338,9 @@ namespace WebSaleRepository.Feature.AccountRepository
             }
 
             existAccountInfo.RoleId = existRole.Id;
-            _ = _dbContext.AccountEntities.Update(existAccountInfo);
-            int result = await _dbContext.SaveChangesAsync();
+
+            result = await _dbContext.SaveChangesAsync();
+
             return await OK(result > 0);
         }
 

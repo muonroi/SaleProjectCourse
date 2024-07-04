@@ -16,12 +16,11 @@ namespace WebSaleRepository.Requests.Accounts
         public string Email { get; set; }
 
         [Required]
-        [MinLength(10), MaxLength(20)]
-        [RegularExpression(@"^[0-9]*$", ErrorMessage = "Phone number invalid")]
+        [RegularExpression(@"^(?:\+84|0)(?:\d{9,10})$", ErrorMessage = "Phone number invalid")]
         public string Phone { get; set; }
+
         [Required]
         [MinLength(10), MaxLength(255)]
         public string Address { get; set; }
-
     }
 }

@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSale", "WebSale\WebSale.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSaleRepository", "WebSaleRepository\WebSaleRepository.csproj", "{2041C348-B7CD-4B94-A9EE-70D5F90792F6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebSaleAPI", "WebSaleAPI\WebSaleAPI.csproj", "{B07AE5AC-D681-457A-A658-86D7D57A5DCF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebSaleAPI", "WebSaleAPI\WebSaleAPI.csproj", "{B07AE5AC-D681-457A-A658-86D7D57A5DCF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebSaleAdmin", "WebSaleAdmin\WebSaleAdmin.csproj", "{DA2D2DF0-320F-457E-B0B4-AA5EA4E849D3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,8 +29,15 @@ Global
 		{B07AE5AC-D681-457A-A658-86D7D57A5DCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B07AE5AC-D681-457A-A658-86D7D57A5DCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B07AE5AC-D681-457A-A658-86D7D57A5DCF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA2D2DF0-320F-457E-B0B4-AA5EA4E849D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA2D2DF0-320F-457E-B0B4-AA5EA4E849D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA2D2DF0-320F-457E-B0B4-AA5EA4E849D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA2D2DF0-320F-457E-B0B4-AA5EA4E849D3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9889A3A0-0782-4A72-94CD-4C474555F20E}
 	EndGlobalSection
 EndGlobal

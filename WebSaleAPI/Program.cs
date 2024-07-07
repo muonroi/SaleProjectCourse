@@ -17,6 +17,7 @@ namespace WebSaleAPI
             .ConfigureAppConfiguration((hostingContext, config) =>
             {
                 IHostEnvironment env = hostingContext.HostingEnvironment;
+                env.EnvironmentName = "Development";
                 _ = config.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                       .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true);
             }).ConfigureWebHostDefaults(webBuilder =>

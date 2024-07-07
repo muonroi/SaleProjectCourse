@@ -2,16 +2,14 @@
   "profiles": {
     "WebSaleAPI": {
       "commandName": "Project",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      "applicationUrl": "http://localhost:9000"
     }
   },
   "WebSaleAPI": {
     "commandName": "Project",
-    "launchBrowser": true,
+    "launchBrowser": false,
     "launchUrl": "SaleCourse",
-    "applicationUrl": "http://localhost:5000",
+    "applicationUrl": "http://localhost:9000",
     "environmentVariables": {
       "ASPNETCORE_ENVIRONMENT": "Development"
     }

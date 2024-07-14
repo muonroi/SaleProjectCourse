@@ -91,5 +91,13 @@ namespace WebSaleAPI.Controllers
             TResponse<bool> response = await _accountRepository.AssignRolesAsync(request);
             return Ok(response);
         }
+
+        [HttpGet("account-status")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> AccoutStatisticStatus([FromQuery] GetStatisticAccountStatusRequest request)
+        {
+            TResponse<List<GetStatisticAccountStattusResponse>> response = await _accountRepository.StatisticAccountStatus(request);
+            return Ok(response);
+        }
     }
 }

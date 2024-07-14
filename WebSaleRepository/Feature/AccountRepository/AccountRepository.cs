@@ -166,6 +166,8 @@ namespace WebSaleRepository.Feature.AccountRepository
 
             AccountEntity accountInfo = await GetAccountAsync(newAccountUser.Username);
 
+            _ = _dbContext.AccountEntities.Update(accountInfo);
+
             RegisterResponse result = new RegisterResponse
             {
                 AccessToken = token,
@@ -220,12 +222,18 @@ namespace WebSaleRepository.Feature.AccountRepository
 
             AccountEntity existAccountInfo = await GetAccountAsync(request.Username);
 
+            _ = _dbContext.AccountEntities.Attach(existAccountInfo);
+
+            _dbContext.Entry(existAccountInfo).Property(x => x.AccountStatus).CurrentValue = AccountStatus.Online;
+
+            _ = await _dbContext.SaveChangesAsync();
+
             if (existAccountInfo == null)
             {
                 return await Fail<UpdateAccountInfoResponse>("Account {0} not exist", new { request.Username });
             }
 
-            existAccountInfo.Password = request.Password;
+            existAccountInfo.Password = string.IsNullOrEmpty(request.Password) ? existAccountInfo.Password : CipherPlantextHelper.Encrypt(request.Password, existAccountInfo.Salt);
 
             TokenInfo tokenInfo = ManagerTokenHelper.GetTokenInfo(_httpContextAccessor, _configuration);
 
@@ -233,22 +241,21 @@ namespace WebSaleRepository.Feature.AccountRepository
 
             if (!isRoleAdmin)
             {
-                existAccountInfo.Password = request.Password;
+                existAccountInfo.Password = string.IsNullOrEmpty(request.Password) ? existAccountInfo.Password : CipherPlantextHelper.Encrypt(request.Password, existAccountInfo.Salt);
+                existAccountInfo.AccountStatus = request.AccountStatus;
             }
             else
             {
-                existAccountInfo.RoleId = request.RoleId;
+                existAccountInfo.RoleId = request.RoleId > 0 ? request.RoleId : existAccountInfo.RoleId;
+                existAccountInfo.Password = string.IsNullOrEmpty(request.Password) ? existAccountInfo.Password : CipherPlantextHelper.Encrypt(request.Password, existAccountInfo.Salt);
                 existAccountInfo.AccountStatus = request.AccountStatus;
             }
 
             _ = _dbContext.AccountEntities.Update(existAccountInfo);
 
-            _ = await _dbContext.SaveChangesAsync();
-
             UpdateAccountInfoResponse result = new UpdateAccountInfoResponse
             {
                 Username = existAccountInfo.Username,
-                Password = existAccountInfo.Password,
                 RoleId = existAccountInfo.RoleId,
                 AccountStatus = existAccountInfo.AccountStatus
             };
@@ -259,7 +266,7 @@ namespace WebSaleRepository.Feature.AccountRepository
         public async Task<TResponse<List<GetStatisticAccountStattusResponse>>> StatisticAccountStatus(GetStatisticAccountStatusRequest request)
         {
             List<GetStatisticAccountStattusResponse> statisticByAccountByStatus = _dbContext.AccountEntities
-                 .Where(acc => acc.CreateDate > request.FromDate && acc.CreateDate < request.ToDate && acc.AccountStatus == request.AccountStatus)
+                 .Where(acc => acc.UpdateDate > request.FromDate && acc.UpdateDate < request.ToDate && acc.AccountStatus == request.AccountStatus)
                  .GroupBy(acc => new { acc.AccountStatus })
                  .Select(group => new GetStatisticAccountStattusResponse
                  {

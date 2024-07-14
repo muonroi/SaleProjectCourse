@@ -12,9 +12,11 @@ namespace WebSaleAdmin.Interfaces
 
         Task<TResponse<RegisterResponse>> RegisterAsync(RegisterRequest request);
 
-        Task<TResponse<UpdateAccountInfoResponse>> UpdateAccountInfo(UpdateAccountInfoRequest request);
+        Task<TResponse<UpdateAccountInfoResponse>> UpdateAccountInfo(UpdateAccountInfoRequest request, string accessToken);
 
-        Task<TResponse<List<GetStatisticAccountStattusResponse>>> StatisticAccountStatus(GetStatisticAccountStatusRequest request);
+        Task<TResponse<List<GetStatisticAccountStattusResponse>>> StatisticAccountStatus(GetStatisticAccountStatusRequest request, string accessToken);
+
+        Task<TResponse<List<GetStatisticAccountStattusResponse>>> StatisticAccountStatusNow(GetStatisticAccountStatusNowRequest request, string accessToken);
 
         Task<TResponse<List<GetCurrentRolesRespone>>> GetCurrentRolesAsync(string input);
 

@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using WebSaleRepository.Persistance.Entities;
 
 namespace WebSaleRepository.Persistance.Entities.Configurations
 {
@@ -10,7 +9,9 @@ namespace WebSaleRepository.Persistance.Entities.Configurations
         {
             _ = builder.ToTable(nameof(AccountEntity));
 
-            _ = builder.HasKey(x => new { x.Username });
+            _ = builder.Property(e => e.Id).ValueGeneratedOnAdd();
+
+            _ = builder.HasKey(x => new { x.Username, x.Id });
 
             _ = builder.Property(x => x.Username).IsRequired().HasMaxLength(50);
 

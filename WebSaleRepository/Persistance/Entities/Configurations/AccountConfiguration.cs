@@ -9,9 +9,9 @@ namespace WebSaleRepository.Persistance.Entities.Configurations
         {
             _ = builder.ToTable(nameof(AccountEntity));
 
-            _ = builder.Property(e => e.Id).ValueGeneratedOnAdd();
+            _ = builder.Ignore(x => x.Id);
 
-            _ = builder.HasKey(x => new { x.Username, x.Id });
+            _ = builder.HasKey(x => new { x.Username });
 
             _ = builder.Property(x => x.Username).IsRequired().HasMaxLength(50);
 

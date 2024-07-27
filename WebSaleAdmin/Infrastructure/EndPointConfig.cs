@@ -8,5 +8,6 @@
         public static string AccountRegister = $"{BaseEndpoint}{BaseAccountEndpoint}/register";
         public static string AccountStatistic = $"{BaseEndpoint}{BaseAccountEndpoint}/account-status";
         public static string AccountUpdateInfo = $"{BaseEndpoint}{BaseAccountEndpoint}";
+        public static string AccountList = $"{BaseEndpoint}{BaseAccountEndpoint}";
     }
 }

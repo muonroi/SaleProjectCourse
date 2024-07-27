@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using WebSaleRepository.Persistance.Entities;
 
 namespace WebSaleRepository.Persistance.Entities.Configurations
 {

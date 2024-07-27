@@ -27,5 +27,7 @@ namespace WebSaleAdmin.Interfaces
         Task<TResponse<bool>> UpdateRolesAsync(UpdateRoleRequest request);
 
         Task<TResponse<bool>> RemoveRolesAsync(long roleId);
+
+        Task<TResponse<GetCurrentUserPagingRespone>> GetCurrentAccountAsync(string accessToken);
     }
 }

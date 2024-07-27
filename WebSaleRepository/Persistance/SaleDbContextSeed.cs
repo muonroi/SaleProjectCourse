@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
 using WebSaleRepository.Helper;
 using WebSaleRepository.Persistance.Entities;
 
@@ -89,6 +90,8 @@ namespace WebSaleRepository.Persistance
                     Phone = "123456789",
                     Address = "1234 Admin St",
                     Username = "admin",
+                    CreatedAt = "admin",
+                    CreateDate = DateTime.UtcNow,
                 },
                 new UserEntity
                 {
@@ -98,6 +101,7 @@ namespace WebSaleRepository.Persistance
                     Phone = "987654321",
                     Address = "4321 User St",
                     Username = "user",
+                    CreatedAt = "admin",
                 });
         }
     }

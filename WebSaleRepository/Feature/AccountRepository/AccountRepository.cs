@@ -181,8 +181,9 @@ namespace WebSaleRepository.Feature.AccountRepository
             return await OK(result);
         }
 
-        public async Task<TResponse<GetCurrentUserPagingRespone>> GetCurrentAccountAsync(int pageIndex, int pageSize)
+        public async Task<TResponse<GetCurrentUserPagingRespone>> GetCurrentAccountAsync(string keyword, int pageIndex, int pageSize)
         {
+            //keyword is: email, user, name of user (lastname or frisname)
             TokenInfoModel tokenInfo = GetCurrentRoleInfo();
 
             if (!tokenInfo.IsAdminRole)
@@ -190,7 +191,12 @@ namespace WebSaleRepository.Feature.AccountRepository
                 return await Fail<GetCurrentUserPagingRespone>("You do not have permission to access", new { });
             }
 
-            List<UserEntity> usersData = await _dbContext.UserEntities.ToListAsync();
+            List<UserEntity> usersData = string.IsNullOrEmpty(keyword) ? await _dbContext.UserEntities.ToListAsync() :
+                await _dbContext.UserEntities
+                .Where(x => x.Username.Contains(keyword)
+                || x.Fullname.Contains(keyword)
+                || x.Email.Contains(keyword))
+                .ToListAsync();
 
             List<LoginResponse> users = usersData.Select(x => new LoginResponse
             {
@@ -200,6 +206,9 @@ namespace WebSaleRepository.Feature.AccountRepository
                 Address = x.Address,
                 Username = x.Username,
                 RoleName = tokenInfo.TokenInfo.Role,
+                IsActive = x.IsActive,
+                CreatedAt = x.CreatedAt,
+                UpdatedAt = x.UpdatedAt
             }).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
 
             GetCurrentUserPagingRespone result = new GetCurrentUserPagingRespone
@@ -222,9 +231,7 @@ namespace WebSaleRepository.Feature.AccountRepository
 
             AccountEntity existAccountInfo = await GetAccountAsync(request.Username);
 
-            _ = _dbContext.AccountEntities.Attach(existAccountInfo);
-
-            _dbContext.Entry(existAccountInfo).Property(x => x.AccountStatus).CurrentValue = AccountStatus.Online;
+            existAccountInfo.AccountStatus = request.AccountStatus;
 
             _ = await _dbContext.SaveChangesAsync();
 

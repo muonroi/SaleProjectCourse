@@ -30,6 +30,20 @@ namespace WebSaleAdmin.Controllers
             return (string.IsNullOrEmpty(currentToken) || string.IsNullOrEmpty(currentUserInfo)) ? RedirectToAction("Login") : (IActionResult)View();
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetListAccount()
+        {
+            string currentToken = GetTokenFromSession();
+            if (string.IsNullOrEmpty(currentToken))
+            {
+                return RedirectToAction("Login");
+            }
+
+            TResponse<GetCurrentUserPagingRespone> result = await _accountService.GetCurrentAccountAsync(currentToken);
+            GetCurrentUserPagingRespone userData = result.StatusCode == 200 ? result.Data : new GetCurrentUserPagingRespone();
+            return View(userData);
+        }
+
         private async Task<int> GetCurrentUserOnline(string accessToken)
         {
             TResponse<List<GetStatisticAccountStattusResponse>> result = await _accountService.StatisticAccountStatusNow(new GetStatisticAccountStatusNowRequest

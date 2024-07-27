@@ -183,6 +183,30 @@ namespace WebSaleAdmin.Services
             return result;
         }
 
+        // Lấy danh sách tài khoản hiện tại
+        public async Task<TResponse<GetCurrentUserPagingRespone>> GetCurrentAccountAsync(string accessToken)
+        {
+            _ = new TResponse<GetCurrentUserPagingRespone>();
+            TResponse<GetCurrentUserPagingRespone> result;
+            try
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                HttpResponseMessage response = await _httpClient.GetAsync($"{EndPointConfig.AccountUpdateInfo}?keyword=&pageIndex=1&pageSize=100");
+                string responseContent = await response.Content.ReadAsStringAsync();
+                result = JsonConvert.DeserializeObject<TResponse<GetCurrentUserPagingRespone>>(responseContent);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                result = new TResponse<GetCurrentUserPagingRespone>
+                {
+                    StatusCode = 500,
+                    Message = "Lỗi hệ thống"
+                };
+            }
+            return result;
+        }
+
         // Cập nhật vai trò của người dùng
         public async Task<TResponse<bool>> UpdateRolesAsync(UpdateRoleRequest request)
         {

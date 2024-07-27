@@ -10,13 +10,12 @@ namespace WebSaleRepository.Persistance.Entities.Configurations
             _ = builder.ToTable(nameof(OrderDetailEntity));
 
             _ = builder.HasOne(x => x.Order)
-           .WithMany(o => o.OrderDetailEntities)
-           .HasForeignKey(x => x.OrderId);
+                .WithMany(o => o.OrderDetailEntities)
+                .HasForeignKey(x => x.OrderId);
 
             _ = builder.HasOne(x => x.Product)
                 .WithMany(p => p.OrderDetailEntities)
                 .HasForeignKey(x => x.ProductId);
-
         }
     }
 }

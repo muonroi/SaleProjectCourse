@@ -46,9 +46,9 @@ namespace WebSaleAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetCurrentUsers([FromQuery] int pageIndex = 1, int pageSize = 10)
+        public async Task<IActionResult> GetCurrentUsers([FromQuery] string keyword, int pageIndex = 1, int pageSize = 10)
         {
-            TResponse<GetCurrentUserPagingRespone> response = await _accountRepository.GetCurrentAccountAsync(pageIndex, pageSize);
+            TResponse<GetCurrentUserPagingRespone> response = await _accountRepository.GetCurrentAccountAsync(keyword, pageIndex, pageSize);
             return Ok(response);
         }
 

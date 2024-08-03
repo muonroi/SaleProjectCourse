@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using WebSaleAdmin.Infrastructure.Enum;
 using WebSaleAdmin.Interfaces;
@@ -41,7 +43,52 @@ namespace WebSaleAdmin.Controllers
 
             TResponse<GetCurrentUserPagingRespone> result = await _accountService.GetCurrentAccountAsync(currentToken);
             GetCurrentUserPagingRespone userData = result.StatusCode == 200 ? result.Data : new GetCurrentUserPagingRespone();
-            return View(userData);
+            Tuple<GetCurrentUserPagingRespone, RegisterRequest> tuple = new Tuple<GetCurrentUserPagingRespone, RegisterRequest>(userData, new RegisterRequest());
+            return View(tuple);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateAccount([FromBody] RegisterRequest request)
+        {
+            string currentToken = GetTokenFromSession();
+            if (string.IsNullOrEmpty(currentToken))
+            {
+                return RedirectToAction("Login");
+            }
+            if (!ModelState.IsValid)
+            {
+                string message = string.Join(" | ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+                ModelState.AddModelError("CreateAccountError", message);
+                return RedirectToAction("GetListAccount");
+            }
+            TResponse<RegisterResponse> result = await _accountService.RegisterAsync(request);
+            if (result.StatusCode != 200)
+            {
+                ModelState.AddModelError("CreateAccountError", result.Message);
+            }
+            return RedirectToAction("GetListAccount");
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> EditAccount([FromBody] RegisterRequest request)
+        {
+            string currentToken = GetTokenFromSession();
+            if (string.IsNullOrEmpty(currentToken))
+            {
+                return RedirectToAction("Login");
+            }
+            if (!ModelState.IsValid)
+            {
+                string message = string.Join(" | ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+                ModelState.AddModelError("CreateAccountError", message);
+                return RedirectToAction("GetListAccount");
+            }
+            TResponse<RegisterResponse> result = await _accountService.RegisterAsync(request);
+            if (result.StatusCode != 200)
+            {
+                ModelState.AddModelError("CreateAccountError", result.Message);
+            }
+            return RedirectToAction("GetListAccount");
         }
 
         private async Task<int> GetCurrentUserOnline(string accessToken)

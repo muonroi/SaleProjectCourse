@@ -24,7 +24,32 @@ namespace WebSaleAdmin.Services
         // Gán vai trò cho người dùng
         public async Task<TResponse<bool>> AssignRolesAsync(AssignRolesRequest request)
         {
-            throw new NotImplementedException();
+            _ = new TResponse<bool>();
+            TResponse<bool> result;
+            try
+            {
+                StringContent content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+                HttpResponseMessage assignRoleResponse = await _httpClient.PatchAsync(EndPointConfig.AssignRole, content);
+                string assignRoleResponseContent = await assignRoleResponse.Content.ReadAsStringAsync();
+                TResponse<bool> response = JsonConvert.DeserializeObject<TResponse<bool>>(assignRoleResponseContent);
+                result = response.StatusCode != 200
+                    ? new TResponse<bool>
+                    {
+                        StatusCode = response.StatusCode,
+                        Message = response.Message
+                    }
+                    : response;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                result = new TResponse<bool>
+                {
+                    StatusCode = 500,
+                    Message = "Lỗi hệ thống"
+                };
+            }
+            return result;
         }
 
         // Tạo vai trò mới
@@ -70,7 +95,6 @@ namespace WebSaleAdmin.Services
             return result;
         }
 
-        // Đăng ký
         public async Task<TResponse<RegisterResponse>> RegisterAsync(RegisterRequest request)
         {
             _ = new TResponse<RegisterResponse>();

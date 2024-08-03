@@ -44,7 +44,6 @@ namespace WebSaleRepository.Feature.AccountRepository
             {
                 return await Fail<LoginResponse>("Username or password incorrect", new { });
             }
-
             RoleEntity role = await _dbContext.RoleEntities.FirstOrDefaultAsync(x => x.Id == existAccountInfo.RoleId);
             if (role == null)
             {
@@ -402,6 +401,19 @@ namespace WebSaleRepository.Feature.AccountRepository
             int result = await _dbContext.SaveChangesAsync();
 
             return await OK(result > 0);
+        }
+
+        public async Task<TResponse<GetCurrentAccountResponse>> GetFirstOrDefaultAccountAsync(string username)
+        {
+            AccountEntity accountRaw = await GetAccountAsync(username);
+            return accountRaw == null
+                ? await Fail<GetCurrentAccountResponse>("Account not found")
+                : await OK(new GetCurrentAccountResponse
+                {
+                    Username = accountRaw.Username,
+                    RoleId = accountRaw.RoleId,
+                    AccountStatus = accountRaw.AccountStatus
+                });
         }
     }
 }

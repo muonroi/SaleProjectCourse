@@ -46,7 +46,7 @@ namespace WebSaleAdmin
             {
                 _ = endpoints.MapControllerRoute(
                    name: "admin",
-                   pattern: "admin/{controller=Admin}/{action=Index}/{id?}");
+                   pattern: "{controller=Admin}/{action=Index}/{id?}");
 
                 _ = endpoints.MapControllerRoute(
                     name: "default",

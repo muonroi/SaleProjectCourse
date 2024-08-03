@@ -9,5 +9,6 @@
         public static string AccountStatistic = $"{BaseEndpoint}{BaseAccountEndpoint}/account-status";
         public static string AccountUpdateInfo = $"{BaseEndpoint}{BaseAccountEndpoint}";
         public static string AccountList = $"{BaseEndpoint}{BaseAccountEndpoint}";
+        public static string AssignRole = $"{BaseEndpoint}{BaseAccountEndpoint}/role-assign";
     }
 }

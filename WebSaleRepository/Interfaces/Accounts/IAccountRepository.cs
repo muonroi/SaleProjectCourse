@@ -8,6 +8,8 @@ namespace WebSaleRepository.Interfaces.Accounts
 {
     public interface IAccountRepository
     {
+        Task<TResponse<GetCurrentAccountResponse>> GetFirstOrDefaultAccountAsync(string accountId);
+
         Task<TResponse<GetCurrentUserPagingRespone>> GetCurrentAccountAsync(string keyword, int pageIndex, int pageSize);
 
         Task<TResponse<LoginResponse>> LoginAsync(LoginRequest request);

@@ -10,6 +10,7 @@ using WebSaleAdmin.Infrastructure;
 using WebSaleAdmin.Interfaces;
 using WebSaleAdmin.Models.Base;
 using WebSaleAdmin.Models.Requests.Accounts;
+using WebSaleAdmin.Models.Requests.Users;
 using WebSaleAdmin.Models.Responses.Accounts;
 using WebSaleAdmin.Services.Base;
 
@@ -24,7 +25,6 @@ namespace WebSaleAdmin.Services
         // Gán vai trò cho người dùng
         public async Task<TResponse<bool>> AssignRolesAsync(AssignRolesRequest request)
         {
-            _ = new TResponse<bool>();
             TResponse<bool> result;
             try
             {
@@ -67,7 +67,6 @@ namespace WebSaleAdmin.Services
         // Đăng nhập
         public async Task<TResponse<LoginResponse>> LoginAsync(LoginRequest request)
         {
-            _ = new TResponse<LoginResponse>();
             TResponse<LoginResponse> result;
             try
             {
@@ -97,7 +96,6 @@ namespace WebSaleAdmin.Services
 
         public async Task<TResponse<RegisterResponse>> RegisterAsync(RegisterRequest request)
         {
-            _ = new TResponse<RegisterResponse>();
             TResponse<RegisterResponse> result;
             try
             {
@@ -134,7 +132,6 @@ namespace WebSaleAdmin.Services
         // Thống kê trạng thái tài khoản
         public async Task<TResponse<List<GetStatisticAccountStattusResponse>>> StatisticAccountStatus(GetStatisticAccountStatusRequest request, string accessToken)
         {
-            _ = new TResponse<List<GetStatisticAccountStattusResponse>>();
             TResponse<List<GetStatisticAccountStattusResponse>> result;
             try
             {
@@ -159,7 +156,6 @@ namespace WebSaleAdmin.Services
         // Thống kê trạng thái tài khoản hiện tại
         public async Task<TResponse<List<GetStatisticAccountStattusResponse>>> StatisticAccountStatusNow(GetStatisticAccountStatusNowRequest request, string accessToken)
         {
-            _ = new TResponse<List<GetStatisticAccountStattusResponse>>();
             TResponse<List<GetStatisticAccountStattusResponse>> result;
             try
             {
@@ -185,7 +181,6 @@ namespace WebSaleAdmin.Services
         // Cập nhật thông tin tài khoản
         public async Task<TResponse<UpdateAccountInfoResponse>> UpdateAccountInfo(UpdateAccountInfoRequest request, string accessToken)
         {
-            _ = new TResponse<UpdateAccountInfoResponse>();
             TResponse<UpdateAccountInfoResponse> result;
             try
             {
@@ -210,7 +205,6 @@ namespace WebSaleAdmin.Services
         // Lấy danh sách tài khoản hiện tại
         public async Task<TResponse<GetCurrentUserPagingRespone>> GetCurrentAccountAsync(string accessToken)
         {
-            _ = new TResponse<GetCurrentUserPagingRespone>();
             TResponse<GetCurrentUserPagingRespone> result;
             try
             {
@@ -223,6 +217,75 @@ namespace WebSaleAdmin.Services
             {
                 _logger.LogError(ex, ex.Message);
                 result = new TResponse<GetCurrentUserPagingRespone>
+                {
+                    StatusCode = 500,
+                    Message = "Lỗi hệ thống"
+                };
+            }
+            return result;
+        }
+
+        public async Task<TResponse<bool>> EditCurrentUserAsync(UpdateUserRequest request, string accessToken)
+        {
+            TResponse<bool> result;
+            try
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                StringContent content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await _httpClient.PutAsync(string.Format(EndPointConfig.UserEditInfo, request.Username), content);
+                string responseContent = await response.Content.ReadAsStringAsync();
+                result = JsonConvert.DeserializeObject<TResponse<bool>>(responseContent);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                result = new TResponse<bool>
+                {
+                    StatusCode = 500,
+                    Message = "Lỗi hệ thống"
+                };
+            }
+            return result;
+        }
+
+        public async Task<TResponse<bool>> DeleteCurrentAccountAsync(string username, string accessToken)
+        {
+            TResponse<bool> result;
+            try
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                HttpResponseMessage response = await _httpClient.DeleteAsync(string.Format(EndPointConfig.DeleteAccount, username));
+                string responseContent = await response.Content.ReadAsStringAsync();
+                result = JsonConvert.DeserializeObject<TResponse<bool>>(responseContent);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                result = new TResponse<bool>
+                {
+                    StatusCode = 500,
+                    Message = "Lỗi hệ thống"
+                };
+            }
+            return result;
+        }
+
+        public async Task<TResponse<bool>> LockCurrentAccountAsync(LockAccountRequest request, string currentToken)
+        {
+            TResponse<bool> result;
+            try
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", currentToken);
+                StringContent content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
+
+                HttpResponseMessage response = await _httpClient.PatchAsync(EndPointConfig.LockAccount, content);
+                string responseContent = await response.Content.ReadAsStringAsync();
+                result = JsonConvert.DeserializeObject<TResponse<bool>>(responseContent);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                result = new TResponse<bool>
                 {
                     StatusCode = 500,
                     Message = "Lỗi hệ thống"

@@ -10,5 +10,10 @@
         public static string AccountUpdateInfo = $"{BaseEndpoint}{BaseAccountEndpoint}";
         public static string AccountList = $"{BaseEndpoint}{BaseAccountEndpoint}";
         public static string AssignRole = $"{BaseEndpoint}{BaseAccountEndpoint}/role-assign";
+        public static string DeleteAccount = $"{BaseEndpoint}{BaseAccountEndpoint}?username={{0}}";
+        public static string LockAccount = $"{BaseEndpoint}{BaseAccountEndpoint}/lock";
+
+        public static string BaseUserEndpoint = $"/User";
+        public static string UserEditInfo = $"{BaseEndpoint}{BaseUserEndpoint}?username={{0}}";
     }
 }

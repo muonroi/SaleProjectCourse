@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using WebSaleAdmin.Models.Base;
 using WebSaleAdmin.Models.Requests.Accounts;
+using WebSaleAdmin.Models.Requests.Users;
 using WebSaleAdmin.Models.Responses.Accounts;
 
 namespace WebSaleAdmin.Interfaces
@@ -29,5 +30,11 @@ namespace WebSaleAdmin.Interfaces
         Task<TResponse<bool>> RemoveRolesAsync(long roleId);
 
         Task<TResponse<GetCurrentUserPagingRespone>> GetCurrentAccountAsync(string accessToken);
+
+        Task<TResponse<bool>> EditCurrentUserAsync(UpdateUserRequest request, string accessToken);
+
+        Task<TResponse<bool>> DeleteCurrentAccountAsync(string username, string currentToken);
+
+        Task<TResponse<bool>> LockCurrentAccountAsync(LockAccountRequest request, string currentToken);
     }
 }

@@ -16,6 +16,8 @@ namespace WebSaleRepository.Interfaces.Accounts
 
         Task<TResponse<RegisterResponse>> RegisterAsync(RegisterRequest request);
 
+        Task<TResponse<bool>> RemoveAccountAsync(string username);
+
         Task<TResponse<UpdateAccountInfoResponse>> UpdateAccountInfo(UpdateAccountInfoRequest request);
 
         Task<TResponse<List<GetStatisticAccountStattusResponse>>> StatisticAccountStatus(GetStatisticAccountStatusRequest request);
@@ -29,5 +31,7 @@ namespace WebSaleRepository.Interfaces.Accounts
         Task<TResponse<bool>> UpdateRolesAsync(UpdateRoleRequest request);
 
         Task<TResponse<bool>> RemoveRolesAsync(long roleId);
+
+        Task<TResponse<bool>> LockAccountAsync(string username);
     }
 }

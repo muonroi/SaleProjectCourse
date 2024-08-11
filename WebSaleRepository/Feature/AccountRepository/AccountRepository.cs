@@ -190,32 +190,43 @@ namespace WebSaleRepository.Feature.AccountRepository
                 return await Fail<GetCurrentUserPagingRespone>("You do not have permission to access", new { });
             }
 
-            List<UserEntity> usersData = string.IsNullOrEmpty(keyword) ? await _dbContext.UserEntities.ToListAsync() :
+            List<UserEntity> usersData = string.IsNullOrEmpty(keyword) ? await _dbContext.UserEntities.Where(x => x.Username != tokenInfo.TokenInfo.UserName
+                && !x.IsDelete).ToListAsync() :
+
                 await _dbContext.UserEntities
                 .Where(x => x.Username.Contains(keyword)
                 || x.Fullname.Contains(keyword)
-                || x.Email.Contains(keyword))
+                || (x.Email.Contains(keyword)
+                && x.Username != tokenInfo.TokenInfo.UserName
+                && !x.IsDelete))
                 .ToListAsync();
 
-            List<LoginResponse> users = usersData.Select(x => new LoginResponse
+            List<AccountEntity> accountForUser = await _dbContext.AccountEntities.ToListAsync();
+
+            var accountUser = from user in usersData
+                              join account in accountForUser on user.Username equals account.Username
+                              select new { user, account };
+
+            List<LoginResponse> userResponse = accountUser.Select(x => new LoginResponse
             {
-                Fullname = x.Fullname,
-                Email = x.Email,
-                Phone = x.Phone,
-                Address = x.Address,
-                Username = x.Username,
+                AccountId = x.account.Id,
+                Fullname = x.user.Fullname,
+                Email = x.user.Email,
+                Phone = x.user.Phone,
+                Address = x.user.Address,
+                Username = x.user.Username,
                 RoleName = tokenInfo.TokenInfo.Role,
-                IsActive = x.IsActive,
-                CreatedAt = x.CreatedAt,
-                UpdatedAt = x.UpdatedAt
+                IsActive = x.account.IsActive,
+                CreatedAt = x.user.CreatedAt,
+                UpdatedAt = x.user.UpdatedAt
             }).Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
 
             GetCurrentUserPagingRespone result = new GetCurrentUserPagingRespone
             {
-                Data = users,
+                Data = userResponse,
                 Total = usersData.Count,
                 PageIndex = pageIndex,
-                PageSize = users.Count
+                PageSize = userResponse.Count
             };
             return await OK(result);
         }
@@ -414,6 +425,32 @@ namespace WebSaleRepository.Feature.AccountRepository
                     RoleId = accountRaw.RoleId,
                     AccountStatus = accountRaw.AccountStatus
                 });
+        }
+
+        public async Task<TResponse<bool>> RemoveAccountAsync(string username)
+        {
+            AccountEntity accountRaw = await _dbContext.AccountEntities.FindAsync(username);
+            if (accountRaw == null)
+            {
+                return await Fail<bool>("Account not found");
+            }
+            accountRaw.IsDelete = true;
+            _ = _dbContext.AccountEntities.Update(accountRaw);
+            _ = await _dbContext.SaveChangesAsync();
+            return await OK(true);
+        }
+
+        public async Task<TResponse<bool>> LockAccountAsync(string username)
+        {
+            AccountEntity accountRaw = await _dbContext.AccountEntities.FindAsync(username);
+            if (accountRaw == null)
+            {
+                return await Fail<bool>("Account not found");
+            }
+            accountRaw.IsActive = !accountRaw.IsActive;
+            _ = _dbContext.AccountEntities.Update(accountRaw);
+            _ = await _dbContext.SaveChangesAsync();
+            return await OK(true);
         }
     }
 }

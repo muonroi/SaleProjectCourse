@@ -99,5 +99,21 @@ namespace WebSaleAPI.Controllers
             TResponse<List<GetStatisticAccountStattusResponse>> response = await _accountRepository.StatisticAccountStatus(request);
             return Ok(response);
         }
+
+        [HttpDelete]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> RemoveAccount([FromQuery] string username)
+        {
+            TResponse<bool> response = await _accountRepository.RemoveAccountAsync(username);
+            return Ok(response);
+        }
+
+        [HttpPatch("lock")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> LockAccount([FromBody] LockAccountRequest request)
+        {
+            TResponse<bool> response = await _accountRepository.LockAccountAsync(request.Username);
+            return Ok(response);
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using System.Data.Entity;
+using System.Linq;
 using System.Threading.Tasks;
 using WebSaleRepository.Infrastructures.Base;
 using WebSaleRepository.Interfaces.Accounts;
@@ -25,7 +26,7 @@ namespace WebSaleRepository.Feature.UserRepository
 
         public async Task<TResponse<bool>> EditUserByUsernameAsync(UpdateUserRequest request, string username)
         {
-            UserEntity existUser = await _dbContext.UserEntities.FirstOrDefaultAsync(x => x.Username == username);
+            UserEntity existUser = _dbContext.UserEntities.FirstOrDefault(x => x.Username == username);
 
             if (existUser == null)
             {
@@ -37,7 +38,7 @@ namespace WebSaleRepository.Feature.UserRepository
             existUser.Phone = request.Phone;
             existUser.Address = request.Address;
             _ = _dbContext.UserEntities.Update(existUser);
-
+            _ = await _dbContext.SaveChangesAsync();
             return await OK(true);
         }
 

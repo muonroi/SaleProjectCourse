@@ -7,6 +7,7 @@ using WebSaleAdmin.Infrastructure.Enum;
 using WebSaleAdmin.Interfaces;
 using WebSaleAdmin.Models.Base;
 using WebSaleAdmin.Models.Requests.Accounts;
+using WebSaleAdmin.Models.Requests.Users;
 using WebSaleAdmin.Models.Responses.Accounts;
 
 namespace WebSaleAdmin.Controllers
@@ -70,7 +71,7 @@ namespace WebSaleAdmin.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> EditAccount([FromBody] RegisterRequest request)
+        public async Task<IActionResult> EditAccount([FromBody] UpdateUserRequest request)
         {
             string currentToken = GetTokenFromSession();
             if (string.IsNullOrEmpty(currentToken))
@@ -80,13 +81,53 @@ namespace WebSaleAdmin.Controllers
             if (!ModelState.IsValid)
             {
                 string message = string.Join(" | ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
-                ModelState.AddModelError("CreateAccountError", message);
+                ModelState.AddModelError("EditCurrentUserError", message);
                 return RedirectToAction("GetListAccount");
             }
-            TResponse<RegisterResponse> result = await _accountService.RegisterAsync(request);
+            TResponse<bool> result = await _accountService.EditCurrentUserAsync(request, currentToken);
             if (result.StatusCode != 200)
             {
-                ModelState.AddModelError("CreateAccountError", result.Message);
+                ModelState.AddModelError("EditCurrentUserError", result.Message);
+            }
+            return RedirectToAction("GetListAccount");
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteAccount([FromBody] DeleteAccountRequest request)
+        {
+            string currentToken = GetTokenFromSession();
+            if (string.IsNullOrEmpty(currentToken))
+            {
+                return RedirectToAction("Login");
+            }
+            if (!ModelState.IsValid)
+            {
+                string message = string.Join(" | ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+                return RedirectToAction("GetListAccount");
+            }
+            TResponse<bool> result = await _accountService.DeleteCurrentAccountAsync(request.Username, currentToken);
+            if (result.StatusCode != 200)
+            {
+            }
+            return RedirectToAction("GetListAccount");
+        }
+
+        [HttpPatch]
+        public async Task<IActionResult> LockAccount([FromBody] LockAccountRequest request)
+        {
+            string currentToken = GetTokenFromSession();
+            if (string.IsNullOrEmpty(currentToken))
+            {
+                return RedirectToAction("Login");
+            }
+            if (!ModelState.IsValid)
+            {
+                string message = string.Join(" | ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+                return RedirectToAction("GetListAccount");
+            }
+            TResponse<bool> result = await _accountService.LockCurrentAccountAsync(request, currentToken);
+            if (result.StatusCode != 200)
+            {
             }
             return RedirectToAction("GetListAccount");
         }

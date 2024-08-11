@@ -2,6 +2,7 @@
 {
     public class LoginResponse
     {
+        public long AccountId { get; set; }
         public string AccessToken { get; set; }
 
         public string Username { get; set; }

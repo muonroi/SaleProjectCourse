@@ -38,11 +38,13 @@
                                     <th scope="row">Trạng thái</th>
                                     <th scope="row">Chỉnh sửa lần cuối</th>
                                     <th scope="row">Ngày tạo</th>
+                                    <th scope="row">Tên người dùng</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach(var item in Model.Item1.Data)
                                 {
+                                    <span>@item.IsActive</span>
                                     <tr>
                                         <td>
                                             <div class="btn-group">
@@ -64,8 +66,9 @@
                                                     data-email="@item.Email"
                                                     data-phone="@item.Phone"
                                                     data-address="@item.Address">Chỉnh sửa</a>
-                                                    <a class="dropdown-item" href="#">Khoá</a>
-                                                    <a class="dropdown-item" href="#">Xóa</a>
+                                                    <a class="dropdown-item" href="#">Gán quyền</a>
+                                                    <a class="dropdown-item" href="#" onclick="handleLockAccount($(this).data('username')); return false;" data-username="@item.Username">Khoá</a>
+                                                    <a class="dropdown-item" href="#" onclick="handleDeleteAccount($(this).data('username')); return false;" data-username="@item.Username">Xóa</a>
                                                 </div>
                                             </div>
                                         </td>
@@ -73,7 +76,7 @@
                                         <td class="text-center">@item.Phone</td>
                                         <td class="text-center">@item.Address</td>
                                         <td class="text-center">@item.RoleName</td>
-                                        @if(!@item.IsActive)
+                                        @if(@item.IsActive)
                                         {
                                             <td class="text-center">Hoạt động</td>
                                         }
@@ -83,6 +86,7 @@
                                         }
                                         <td class="text-center">@item.UpdatedAt</td>
                                         <td class="text-center">@item.CreatedAt</td>
+                                        <td class="text-center username-input">@item.Username</td>
                                     </tr>
                                 }
                             </tbody>
@@ -133,13 +137,34 @@
                         @Html.TextAreaFor(x => x.Item2.Address, new { @id = "Address", @class = "form-control", placeholder = "YourAddress" })
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Thêm</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Lưu</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
+
+@* <div class="modal fade" id="assignrole" tabindex="-1" role="dialog" aria-labelledby="assignrole" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="assignroleLabel">Assign Role</h5>
+            </div>
+            <div class="modal-body">
+                <form id="userForm" onsubmit="handleAssignRoleButton(); return false;">
+                    <div class="form-group">
+                        @Html.DropDownListFor(x => x.Item2.RoleId, new SelectList(Model.Item1.Roles, "Id", "Name"), new { @id = "RoleId", @class = "form-control" })
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Lưu</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div> *@
 @section GetListAccountScripts {
     <script src="~/assets/js/lib/data-table/datatables.min.js"></script>
     <script src="~/assets/js/lib/data-table/dataTables.bootstrap.min.js"></script>
@@ -157,6 +182,44 @@
         $(document).ready(function () {
             $('#bootstrap-data-table-export').DataTable();
         });
+        function handleAssignRoleButton() {
+            $('#assignrole').modal('show');
+        }
+
+        function handleDeleteAccount(username) {
+            console.log("data: " + username);
+            if (username) {
+                $.ajax({
+                    url: 'DeleteAccount',
+                    type: 'DELETE',
+                    data: JSON.stringify({ username: username }),
+                    contentType: 'application/json',
+                    success: function (res) {
+                        if (res.success) {
+                            location.reload();
+                        }
+                    }
+                });
+            }
+        }
+
+        function handleLockAccount(username) {
+            console.log("data: " + username);
+            if (username) {
+                $.ajax({
+                    url: 'LockAccount',
+                    type: 'PATCH',
+                    data: JSON.stringify({ username: username }),
+                    contentType: 'application/json',
+                    success: function (res) {
+                        if (res.success) {
+                            location.reload();
+                        }
+                    }
+                });
+            }
+        }
+
         function handleSubmit() {
             const isEditMode = $('#userForm').data('edit') || false;
             var data = {
@@ -176,6 +239,7 @@
                 success: function (res) {
                     if (res.success) {
                         location.reload();
+                            $('#addnewuser').modal('close');
                     } else {
                         location.reload();
                     }
@@ -196,7 +260,6 @@
             const modal = $(this);
             modal.find('.modal-title').text(isEdit ? 'Edit User' : 'Add New User');
             modal.find('#userForm').data('edit',isEdit);
-
             if (isEdit) {
                 modal.find('#Fullname').val(fullname);
                 modal.find('#Username').val(username);
@@ -205,7 +268,7 @@
                 modal.find('#Address').val(address);
                 modal.find('#Password').prop('disabled', true);
                 modal.find('#ConfirmPassword').prop('disabled', true);
-
+               modal.find('#Username').prop('disabled', true);
             }
             else {
                 modal.find('#userForm')[0].reset();

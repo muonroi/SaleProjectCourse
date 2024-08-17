@@ -232,7 +232,7 @@ namespace WebSaleRepository.Feature.AccountRepository
         }
 
         // Admin and user
-        public async Task<TResponse<UpdateAccountInfoResponse>> UpdateAccountInfo(UpdateAccountInfoRequest request)
+        public async Task<TResponse<bool>> UpdateAccountInfo(UpdateAccountInfoRequest request)
         {
             // get account from database
             // exist => get account info and update new info and keep origin info
@@ -247,7 +247,7 @@ namespace WebSaleRepository.Feature.AccountRepository
 
             if (existAccountInfo == null)
             {
-                return await Fail<UpdateAccountInfoResponse>("Account {0} not exist", new { request.Username });
+                return await Fail<bool>("Account {0} not exist", new { request.Username });
             }
 
             existAccountInfo.Password = string.IsNullOrEmpty(request.Password) ? existAccountInfo.Password : CipherPlantextHelper.Encrypt(request.Password, existAccountInfo.Salt);
@@ -270,14 +270,9 @@ namespace WebSaleRepository.Feature.AccountRepository
 
             _ = _dbContext.AccountEntities.Update(existAccountInfo);
 
-            UpdateAccountInfoResponse result = new UpdateAccountInfoResponse
-            {
-                Username = existAccountInfo.Username,
-                RoleId = existAccountInfo.RoleId,
-                AccountStatus = existAccountInfo.AccountStatus
-            };
+            int result = await _dbContext.SaveChangesAsync();
 
-            return await OK(result);
+            return await OK(result > 0);
         }
 
         public async Task<TResponse<List<GetStatisticAccountStattusResponse>>> StatisticAccountStatus(GetStatisticAccountStatusRequest request)
@@ -384,14 +379,13 @@ namespace WebSaleRepository.Feature.AccountRepository
                 return await Fail<bool>("Role not exist");
             }
 
-            existRole.Name = request.RoleName;
             existRole.Description = request.Description;
             _ = _dbContext.RoleEntities.Update(existRole);
             int result = await _dbContext.SaveChangesAsync();
             return await OK(result > 0);
         }
 
-        public async Task<TResponse<bool>> RemoveRolesAsync(long roleId)
+        public async Task<TResponse<bool>> RemoveRolesAsync(string roleName)
         {
             TokenInfoModel tokenInfo = GetCurrentRoleInfo();
 
@@ -400,7 +394,7 @@ namespace WebSaleRepository.Feature.AccountRepository
                 return await Fail<bool>("You do not have permission to access", new { });
             }
 
-            RoleEntity existRole = await _dbContext.RoleEntities.FirstOrDefaultAsync(x => x.Id == roleId);
+            RoleEntity existRole = await _dbContext.RoleEntities.FirstOrDefaultAsync(x => x.Name == roleName);
 
             if (existRole is null)
             {

@@ -1,10 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
 using WebSaleAdmin.Infrastructure;
 using WebSaleAdmin.Interfaces;
@@ -23,299 +18,83 @@ namespace WebSaleAdmin.Services
         }
 
         // Gán vai trò cho người dùng
-        public async Task<TResponse<bool>> AssignRolesAsync(AssignRolesRequest request)
+        public async Task<TResponse<bool>> AssignRolesAsync(AssignRolesRequest request, string accessToken)
         {
-            TResponse<bool> result;
-            try
-            {
-                StringContent content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
-                HttpResponseMessage assignRoleResponse = await _httpClient.PatchAsync(EndPointConfig.AssignRole, content);
-                string assignRoleResponseContent = await assignRoleResponse.Content.ReadAsStringAsync();
-                TResponse<bool> response = JsonConvert.DeserializeObject<TResponse<bool>>(assignRoleResponseContent);
-                result = response.StatusCode != 200
-                    ? new TResponse<bool>
-                    {
-                        StatusCode = response.StatusCode,
-                        Message = response.Message
-                    }
-                    : response;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-                result = new TResponse<bool>
-                {
-                    StatusCode = 500,
-                    Message = "Lỗi hệ thống"
-                };
-            }
-            return result;
+            return await SendPatchRequestAsync(EndPointConfig.AssignRole, request, true, accessToken);
         }
 
         // Tạo vai trò mới
-        public async Task<TResponse<bool>> CreateaRolesAsync(CreateRoleRequest request)
+        public async Task<TResponse<bool>> CreateRolesAsync(CreateRoleRequest request, string accessToken)
         {
-            throw new NotImplementedException();
+            return await SendPostRequestAsync<bool, CreateRoleRequest>(EndPointConfig.ManageRole, request, true, accessToken);
         }
 
         // Lấy danh sách vai trò hiện tại của người dùng
-        public async Task<TResponse<List<GetCurrentRolesRespone>>> GetCurrentRolesAsync(string input)
+        public async Task<TResponse<List<GetCurrentRolesRespone>>> GetCurrentRolesAsync(string input, string accessToken)
         {
-            throw new NotImplementedException();
+            return await SendGetRequestAsync<List<GetCurrentRolesRespone>>(string.Format(EndPointConfig.RoleList, input), true, accessToken);
         }
 
         // Đăng nhập
         public async Task<TResponse<LoginResponse>> LoginAsync(LoginRequest request)
         {
-            TResponse<LoginResponse> result;
-            try
-            {
-                StringContent content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
-                HttpResponseMessage loginResponse = await _httpClient.PostAsync(EndPointConfig.AccountLogin, content);
-                string loginResponseContent = await loginResponse.Content.ReadAsStringAsync();
-                TResponse<LoginResponse> response = JsonConvert.DeserializeObject<TResponse<LoginResponse>>(loginResponseContent);
-                result = response.StatusCode != 200
-                    ? new TResponse<LoginResponse>
-                    {
-                        StatusCode = response.StatusCode,
-                        Message = response.Message
-                    }
-                    : response;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-                result = new TResponse<LoginResponse>
-                {
-                    StatusCode = 500,
-                    Message = "Lỗi hệ thống"
-                };
-            }
-            return result;
+            return await SendPostRequestAsync<LoginResponse, LoginRequest>(EndPointConfig.AccountLogin, request);
         }
 
         public async Task<TResponse<RegisterResponse>> RegisterAsync(RegisterRequest request)
         {
-            TResponse<RegisterResponse> result;
-            try
-            {
-                StringContent content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
-                HttpResponseMessage registerResponse = await _httpClient.PostAsync(EndPointConfig.AccountRegister, content);
-                string registerResponseContent = await registerResponse.Content.ReadAsStringAsync();
-                TResponse<RegisterResponse> response = JsonConvert.DeserializeObject<TResponse<RegisterResponse>>(registerResponseContent);
-                result = response.StatusCode != 200
-                    ? new TResponse<RegisterResponse>
-                    {
-                        StatusCode = response.StatusCode,
-                        Message = response.Message
-                    }
-                    : response;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-                result = new TResponse<RegisterResponse>
-                {
-                    StatusCode = 500,
-                    Message = "Lỗi hệ thống"
-                };
-            }
-            return result;
+            return await SendPostRequestAsync<RegisterResponse, RegisterRequest>(EndPointConfig.AccountRegister, request);
         }
 
         // Xóa vai trò của người dùng
-        public async Task<TResponse<bool>> RemoveRolesAsync(long roleId)
+        public async Task<TResponse<bool>> RemoveRolesAsync(long roleId, string accessToken)
         {
-            throw new NotImplementedException();
+            return await SendDeleteRequestAsync<bool>(string.Format(EndPointConfig.ManageRole, roleId), true, accessToken);
         }
 
         // Thống kê trạng thái tài khoản
         public async Task<TResponse<List<GetStatisticAccountStattusResponse>>> StatisticAccountStatus(GetStatisticAccountStatusRequest request, string accessToken)
         {
-            TResponse<List<GetStatisticAccountStattusResponse>> result;
-            try
-            {
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-
-                HttpResponseMessage statisticUserResponse = await _httpClient.GetAsync($"{EndPointConfig.AccountStatistic}?AccountStatus={request.AccountStatus}&FromDate={request.FromDate}&ToDate={request.ToDate}");
-                string statisticUserResponseContent = await statisticUserResponse.Content.ReadAsStringAsync();
-                result = JsonConvert.DeserializeObject<TResponse<List<GetStatisticAccountStattusResponse>>>(statisticUserResponseContent);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-                result = new TResponse<List<GetStatisticAccountStattusResponse>>
-                {
-                    StatusCode = 500,
-                    Message = "Lỗi hệ thống"
-                };
-            }
-            return result;
+            return await SendGetRequestAsync<List<GetStatisticAccountStattusResponse>>(string.Format(EndPointConfig.AccountStatistic, request.AccountStatus, request.FromDate, request.ToDate), true, accessToken);
         }
 
         // Thống kê trạng thái tài khoản hiện tại
         public async Task<TResponse<List<GetStatisticAccountStattusResponse>>> StatisticAccountStatusNow(GetStatisticAccountStatusNowRequest request, string accessToken)
         {
-            TResponse<List<GetStatisticAccountStattusResponse>> result;
-            try
-            {
-                DateTime dateTimeNow = DateTime.UtcNow;
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                HttpResponseMessage statisticUserResponse = await _httpClient.GetAsync($"{EndPointConfig.AccountStatistic}?AccountStatus={request.AccountStatus}&FromDate={dateTimeNow.AddHours(-5)}&ToDate={dateTimeNow}"
-                    );
-                string statisticUserResponseContent = await statisticUserResponse.Content.ReadAsStringAsync();
-                result = JsonConvert.DeserializeObject<TResponse<List<GetStatisticAccountStattusResponse>>>(statisticUserResponseContent);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-                result = new TResponse<List<GetStatisticAccountStattusResponse>>
-                {
-                    StatusCode = 500,
-                    Message = "Lỗi hệ thống"
-                };
-            }
-            return result;
+            return await SendGetRequestAsync<List<GetStatisticAccountStattusResponse>>(string.Format(EndPointConfig.AccountStatistic, request.AccountStatus), true, accessToken);
         }
 
         // Cập nhật thông tin tài khoản
-        public async Task<TResponse<UpdateAccountInfoResponse>> UpdateAccountInfo(UpdateAccountInfoRequest request, string accessToken)
+        public async Task<TResponse<bool>> UpdateAccountInfo(UpdateAccountInfoRequest request, string accessToken)
         {
-            TResponse<UpdateAccountInfoResponse> result;
-            try
-            {
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                StringContent content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await _httpClient.PutAsync(EndPointConfig.AccountUpdateInfo, content);
-                string responseContent = await response.Content.ReadAsStringAsync();
-                result = JsonConvert.DeserializeObject<TResponse<UpdateAccountInfoResponse>>(responseContent);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-                result = new TResponse<UpdateAccountInfoResponse>
-                {
-                    StatusCode = 500,
-                    Message = "Lỗi hệ thống"
-                };
-            }
-            return result;
+            return await SendPutRequestAsync(EndPointConfig.AccountUpdateInfo, request, true, accessToken);
         }
 
         // Lấy danh sách tài khoản hiện tại
         public async Task<TResponse<GetCurrentUserPagingRespone>> GetCurrentAccountAsync(string accessToken)
         {
-            TResponse<GetCurrentUserPagingRespone> result;
-            try
-            {
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                HttpResponseMessage response = await _httpClient.GetAsync($"{EndPointConfig.AccountUpdateInfo}?keyword=&pageIndex=1&pageSize=100");
-                string responseContent = await response.Content.ReadAsStringAsync();
-                result = JsonConvert.DeserializeObject<TResponse<GetCurrentUserPagingRespone>>(responseContent);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-                result = new TResponse<GetCurrentUserPagingRespone>
-                {
-                    StatusCode = 500,
-                    Message = "Lỗi hệ thống"
-                };
-            }
-            return result;
+            return await SendGetRequestAsync<GetCurrentUserPagingRespone>(EndPointConfig.AccountList, true, accessToken);
         }
 
         public async Task<TResponse<bool>> EditCurrentUserAsync(UpdateUserRequest request, string accessToken)
         {
-            TResponse<bool> result;
-            try
-            {
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                StringContent content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await _httpClient.PutAsync(string.Format(EndPointConfig.UserEditInfo, request.Username), content);
-                string responseContent = await response.Content.ReadAsStringAsync();
-                result = JsonConvert.DeserializeObject<TResponse<bool>>(responseContent);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-                result = new TResponse<bool>
-                {
-                    StatusCode = 500,
-                    Message = "Lỗi hệ thống"
-                };
-            }
-            return result;
+            return await SendPutRequestAsync(EndPointConfig.AccountUpdateInfo, request, true, accessToken);
         }
 
         public async Task<TResponse<bool>> DeleteCurrentAccountAsync(string username, string accessToken)
         {
-            TResponse<bool> result;
-            try
-            {
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                HttpResponseMessage response = await _httpClient.DeleteAsync(string.Format(EndPointConfig.DeleteAccount, username));
-                string responseContent = await response.Content.ReadAsStringAsync();
-                result = JsonConvert.DeserializeObject<TResponse<bool>>(responseContent);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-                result = new TResponse<bool>
-                {
-                    StatusCode = 500,
-                    Message = "Lỗi hệ thống"
-                };
-            }
-            return result;
+            return await SendDeleteRequestAsync<bool>(string.Format(EndPointConfig.DeleteAccount, username), true, accessToken);
         }
 
         public async Task<TResponse<bool>> LockCurrentAccountAsync(LockAccountRequest request, string currentToken)
         {
-            TResponse<bool> result;
-            try
-            {
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", currentToken);
-                StringContent content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
-
-                HttpResponseMessage response = await _httpClient.PatchAsync(EndPointConfig.LockAccount, content);
-                string responseContent = await response.Content.ReadAsStringAsync();
-                result = JsonConvert.DeserializeObject<TResponse<bool>>(responseContent);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message);
-                result = new TResponse<bool>
-                {
-                    StatusCode = 500,
-                    Message = "Lỗi hệ thống"
-                };
-            }
-            return result;
+            return await SendPatchRequestAsync(EndPointConfig.LockAccount, request, true, currentToken);
         }
 
         // Cập nhật vai trò của người dùng
         public async Task<TResponse<bool>> UpdateRolesAsync(UpdateRoleRequest request)
         {
-            throw new NotImplementedException();
-            //TResponse<bool> result = new TResponse<bool>();
-            //try
-            //{
-            //    StringContent content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
-            //    HttpResponseMessage response = await _httpClient.PutAsync(EndPointConfig.UpdateRole, content);
-            //    string responseContent = await response.Content.ReadAsStringAsync();
-            //    result = JsonConvert.DeserializeObject<TResponse<bool>>(responseContent);
-            //}
-            //catch (Exception ex)
-            //{
-            //    _logger.LogError(ex, ex.Message);
-            //    result = new TResponse<bool>
-            //    {
-            //        StatusCode = 500,
-            //        Message = "Lỗi hệ thống"
-            //    };
-            //}
-            //return result;
+            return await SendPutRequestAsync(EndPointConfig.ManageRole, request, true);
         }
     }
 }

@@ -33,7 +33,7 @@ namespace WebSaleAPI.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateUser([FromBody] UpdateAccountInfoRequest request)
         {
-            TResponse<UpdateAccountInfoResponse> response = await _accountRepository.UpdateAccountInfo(request);
+            TResponse<bool> response = await _accountRepository.UpdateAccountInfo(request);
             return Ok(response);
         }
 

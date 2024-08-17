@@ -1,6 +1,6 @@
 ﻿@using WebSaleAdmin.Models.Responses.Accounts
 @using WebSaleAdmin.Models.Requests.Accounts
-@model Tuple<GetCurrentUserPagingRespone,RegisterRequest>
+@model Tuple<GetCurrentUserPagingRespone, RegisterRequest, List<GetCurrentRolesRespone>>
 @section GetListAccountStyles {
     <link rel="stylesheet" href="~/assets/css/lib/datatable/dataTables.bootstrap.min.css">
 }
@@ -44,7 +44,6 @@
                             <tbody>
                                 @foreach(var item in Model.Item1.Data)
                                 {
-                                    <span>@item.IsActive</span>
                                     <tr>
                                         <td>
                                             <div class="btn-group">
@@ -66,7 +65,7 @@
                                                     data-email="@item.Email"
                                                     data-phone="@item.Phone"
                                                     data-address="@item.Address">Chỉnh sửa</a>
-                                                    <a class="dropdown-item" href="#">Gán quyền</a>
+                                                    <a class="dropdown-item" href="#" data-username="@item.Username">Gán quyền</a>
                                                     <a class="dropdown-item" href="#" onclick="handleLockAccount($(this).data('username')); return false;" data-username="@item.Username">Khoá</a>
                                                     <a class="dropdown-item" href="#" onclick="handleDeleteAccount($(this).data('username')); return false;" data-username="@item.Username">Xóa</a>
                                                 </div>
@@ -145,26 +144,38 @@
         </div>
     </div>
 </div>
-
-@* <div class="modal fade" id="assignrole" tabindex="-1" role="dialog" aria-labelledby="assignrole" aria-hidden="true">
+<div class="modal fade" id="assignRoleModal" tabindex="-1" role="dialog" aria-labelledby="assignRoleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="assignroleLabel">Assign Role</h5>
+                <h5 class="modal-title" id="assignRoleModalLabel">Gán quyền cho người dùng</h5>
             </div>
             <div class="modal-body">
-                <form id="userForm" onsubmit="handleAssignRoleButton(); return false;">
+                <form id="assignRoleForm" onsubmit="handleAssignRoleSubmit(); return false;">
                     <div class="form-group">
-                        @Html.DropDownListFor(x => x.Item2.RoleId, new SelectList(Model.Item1.Roles, "Id", "Name"), new { @id = "RoleId", @class = "form-control" })
+                        <label for="assignRoleUsername">Tên người dùng</label>
+                        <input type="text" id="assignRoleUsername" class="form-control" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="roleSelect">Quyền</label>
+                        <select id="roleSelect" class="form-control">
+                            @foreach (var role in Model.Item3)
+                            {
+                                <option value="@role.Id">@role.Name</option>
+                            }
+                        </select>
+
                     </div>
                     <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
                         <button type="submit" class="btn btn-primary">Lưu</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-</div> *@
+</div>
+
 @section GetListAccountScripts {
     <script src="~/assets/js/lib/data-table/datatables.min.js"></script>
     <script src="~/assets/js/lib/data-table/dataTables.bootstrap.min.js"></script>
@@ -179,11 +190,39 @@
 
 
     <script type="text/javascript">
+
         $(document).ready(function () {
-            $('#bootstrap-data-table-export').DataTable();
-        });
-        function handleAssignRoleButton() {
-            $('#assignrole').modal('show');
+            $('#bootstrap-data-table').DataTable();
+
+            $(document).on('click', '.dropdown-item', function () {
+                const username = $(this).data('username');
+                handleAssignRoleButton(username);
+            });
+        })
+
+        function handleAssignRoleButton(username) {
+            $('#assignRoleUsername').val(username);
+            $('#assignRoleUsername').attr('aria-hidden','false');
+            $('#assignRoleModal').modal('show');
+        }
+
+        function handleAssignRoleSubmit() {
+            var username = $('#assignRoleUsername').val();
+            var roleId = $('#roleSelect').val();
+
+            $.ajax({
+                url: 'AssignRole',
+                type: 'POST',
+                data: JSON.stringify({ username: username, roleId: roleId }),
+                contentType: 'application/json',
+                success: function (res) {
+                    if (res.success) {
+                        location.reload();
+                        $('#assignRoleModal').modal('close');
+                    } else {
+                    }
+                }
+            });
         }
 
         function handleDeleteAccount(username) {

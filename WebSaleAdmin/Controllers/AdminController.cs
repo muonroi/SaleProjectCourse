@@ -44,7 +44,11 @@ namespace WebSaleAdmin.Controllers
 
             TResponse<GetCurrentUserPagingRespone> result = await _accountService.GetCurrentAccountAsync(currentToken);
             GetCurrentUserPagingRespone userData = result.StatusCode == 200 ? result.Data : new GetCurrentUserPagingRespone();
-            Tuple<GetCurrentUserPagingRespone, RegisterRequest> tuple = new Tuple<GetCurrentUserPagingRespone, RegisterRequest>(userData, new RegisterRequest());
+
+            TResponse<List<GetCurrentRolesRespone>> roles = await _accountService.GetCurrentRolesAsync("", currentToken);
+
+            Tuple<GetCurrentUserPagingRespone, RegisterRequest, List<GetCurrentRolesRespone>> tuple = new Tuple<GetCurrentUserPagingRespone, RegisterRequest, List<GetCurrentRolesRespone>>(userData, new RegisterRequest(), roles.Data);
+
             return View(tuple);
         }
 
@@ -140,6 +144,78 @@ namespace WebSaleAdmin.Controllers
             }, accessToken);
 
             return result.StatusCode == 200 ? result.Data.Count : 0;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ManageRoles()
+        {
+            string currentToken = GetTokenFromSession();
+            if (string.IsNullOrEmpty(currentToken))
+            {
+                return RedirectToAction("Login");
+            }
+
+            TResponse<List<GetCurrentRolesRespone>> result = await _accountService.GetCurrentRolesAsync("", currentToken);
+            if (result.StatusCode != 200)
+            {
+                ModelState.AddModelError("ManageRolesError", result.Message);
+            }
+
+            return View(result.Data);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateRole([FromBody] CreateRoleRequest request)
+        {
+            string currentToken = GetTokenFromSession();
+            if (string.IsNullOrEmpty(currentToken))
+            {
+                return RedirectToAction("Login");
+            }
+
+            TResponse<bool> result = await _accountService.CreateRolesAsync(request, currentToken);
+            if (result.StatusCode != 200)
+            {
+                ModelState.AddModelError("CreateRoleError", result.Message);
+            }
+
+            return RedirectToAction("ManageRoles");
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> EditRole([FromBody] UpdateRoleRequest request)
+        {
+            string currentToken = GetTokenFromSession();
+            if (string.IsNullOrEmpty(currentToken))
+            {
+                return RedirectToAction("Login");
+            }
+
+            TResponse<bool> result = await _accountService.UpdateRolesAsync(request);
+            if (result.StatusCode != 200)
+            {
+                ModelState.AddModelError("EditRoleError", result.Message);
+            }
+
+            return RedirectToAction("ManageRoles");
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteRole(long roleId)
+        {
+            string currentToken = GetTokenFromSession();
+            if (string.IsNullOrEmpty(currentToken))
+            {
+                return RedirectToAction("Login");
+            }
+
+            TResponse<bool> result = await _accountService.RemoveRolesAsync(roleId, currentToken);
+            if (result.StatusCode != 200)
+            {
+                ModelState.AddModelError("DeleteRoleError", result.Message);
+            }
+
+            return RedirectToAction("ManageRoles");
         }
     }
 }
